@@ -1,5 +1,4 @@
-#ifndef Lexer
-#define Lexer
+#ifndef LEXER_H
+#define LEXER_H
 
-
-#endif // Lexer
+#endif // LEXER_H
