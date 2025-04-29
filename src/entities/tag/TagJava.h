@@ -1,7 +1,7 @@
-#ifndef TagJava
-#define TagJava
+#ifndef JTag
+#define JTag
 
-enum TagJava {
+enum JTag {
     // --- Special characters ---
     EOF = 65535,
     ERROR = 65534,
@@ -67,36 +67,36 @@ enum TagJava {
     THROWS = 1339,
     ASSERT = 1340,
 
-    // --- Class Declarations ---
-    CLASS = 1424,
-    INTERFACE = 1425,
-    EXTENDS = 1426,
-    IMPLEMENTS = 1427,
-    ENUM = 1428,
-    ABSTRACT = 1429,
-    FINAL = 1430,
-    STRICTFP = 1431,
-    NATIVE = 1432,
-    SYNCHRONIZED = 1433,
-    TRANSIENT = 1434,
-    VOLATILE = 1435,
+    // --- Package and Import Management ---
+    PACKAGE = 1424,
+    IMPORT = 1425,
 
-    // Storage Classes
-    STATIC = 1824
+    // Storage Class Specifiers
+    STATIC = 1524,
+
+    // --- Class Declarations ---
+    CLASS = 1624,
+    INTERFACE = 1625,
+    EXTENDS = 1626,
+    IMPLEMENTS = 1627,
+    ENUM = 1628,
+    ABSTRACT = 1629,
+    FINAL = 1630,
+    STRICTFP = 1631,
+    NATIVE = 1632,
+    SYNCHRONIZED = 1633,
+    TRANSIENT = 1634,
+    VOLATILE = 1635,
 
     // --- Object and Memory Operations ---
-    NEW = 1524,
-    THIS = 1525,
-    SUPER = 1526,
+    NEW = 1724,
+    THIS = 1725,
+    SUPER = 1726,
       
     // --- Access Modifiers ---
-    PRIVATE = 1624,
-    PROTECTED = 1625,
-    PUBLIC = 1626,
-
-    // --- Package and Import Management ---
-    PACKAGE = 1724,
-    IMPORT = 1725,
+    PRIVATE = 1824,
+    PROTECTED = 1825,
+    PUBLIC = 1826
 };
 
-#endif // TagJava
+#endif // JTag

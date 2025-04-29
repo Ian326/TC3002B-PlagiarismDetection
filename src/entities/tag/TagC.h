@@ -1,7 +1,7 @@
-#ifndef TagC
-#define TagC
+#ifndef CTag
+#define CTag
 
-enum TagC {
+enum CTag {
     // --- Special Characters ---
     EOF = 65535,
     ERROR = 65534,
@@ -48,6 +48,8 @@ enum TagC {
     DECIMAL32 = 1139,
     DECIMAL64 = 1140,
     DECIMAL128 = 1141,
+    ATOMIC = 1924,
+    GENERIC = 1925,
 
     // --- Literals ---
     TRUE = 1224,
@@ -71,37 +73,33 @@ enum TagC {
     GOTO = 1335,
     RETURN = 1336,
 
-    // --- Data Structures ---
-    TYPEOF = 1524,
-    SIZEOF = 1525,
-    STRUCT = 1526,
-    UNION = 1527,
-    TYPEDEF = 1624,
-    TYPEOF_UNQUAL = 1625,
+    // --- Package and Import Management ---
+    INCLUDE = 1424,
 
     // --- Storage Class Specifiers ---
-    CONST = 1724,
-    CONSTEXPR = 1725,
-    EXTERN = 1726,
-    INLINE = 1727,
-    REGISTER = 1728,
-    RESTRICT = 1729,
-    NORETURN = 1730,
-    THREAD_LOCAL = 1731, 
-    STATIC = 1732, 
-    VOLATILE = 1733,
-    STATIC_ASSERT = 1734,
+    CONST = 1524,
+    CONSTEXPR = 1525,
+    EXTERN = 1526,
+    INLINE = 1527,
+    REGISTER = 1528,
+    RESTRICT = 1529,
+    NORETURN = 1530,
+    THREAD_LOCAL = 1531, 
+    STATIC = 1532, 
+    VOLATILE = 1533,
+    STATIC_ASSERT = 1534,
 
-    // --- Package and Import Management ---
-    INCLUDE = 1824,
-
-    // --- Miscellaneous ---
-    ATOMIC = 1924,
-    GENERIC = 1925
+    // --- Data Structures ---
+    TYPEOF = 1624,
+    SIZEOF = 1625,
+    STRUCT = 1626,
+    UNION = 1627,
+    TYPEDEF = 1628,
+    TYPEOF_UNQUAL = 1628,
 
     // --- Alignment ---
-    ALIGNAS = 1424,
-    ALIGNOF = 1425,
+    ALIGNAS = 1724,
+    ALIGNOF = 1725
 };
 
-#endif // TagC
+#endif // CTag
