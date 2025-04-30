@@ -1,12 +1,17 @@
 #include <bits/stdc++.h>
 #include <iostream>
-#include "./entities/tag/C/Tag.h"
-#include "./entities/tag/Java/Tag.h"
-#include "./entities/token/Token.h"
+
+#include "./application/controllers/TreeBuilderController.h"
+#include "./domain/entities/AbstractSyntaxTree.h"
 
 using namespace std;
 
 int main(){
-    Token<C::Tag> token(C::Tag::EQ, "");
+    std::filesystem::path original = "../resources/datasets/original/1.cpp";
+    std::filesystem::path plagiarized = "../resources/datasets/plagiarized/1.cpp";
+
+    TreeBuilderController treeBuilderController;
+    AbstractSyntaxTree* ast = treeBuilderController.getTree(original, plagiarized);
+    
     return 0;
 }
