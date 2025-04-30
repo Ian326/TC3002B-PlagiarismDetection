@@ -4,7 +4,7 @@
 
 /**
  * @class AbstractSyntaxTree
- * @brief This class builds and AST.
+ * @brief This class builds an AST.
  */
 class AbstractSyntaxTree {
     private:

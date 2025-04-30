@@ -38,10 +38,10 @@ CommandExecutor::~CommandExecutor(){}
 
 
 /**
- * @brief Executes a system command and returns the output.
+ * @brief Executes a system command and returns the output file path.
  * @param command The command to be executed. 
  * @throws std::runtime_error if the command cannot be executed.
- * @return The output of the command.
+ * @return Generates a file with the output of the command and returns its path.
  */
 std::string CommandExecutor::execute(std::string& command) {;
     char buffer[128];
