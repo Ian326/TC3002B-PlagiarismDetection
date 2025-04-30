@@ -7,11 +7,10 @@
 using namespace std;
 
 int main(){
-    std::filesystem::path original = "../resources/datasets/original/1.cpp";
-    std::filesystem::path plagiarized = "../resources/datasets/plagiarized/1.cpp";
+    std::filesystem::path sourceCode = "../resources/datasets/original/1.cpp";
 
     TreeBuilderController treeBuilderController;
-    AbstractSyntaxTree* ast = treeBuilderController.getTree(original, plagiarized);
+    AbstractSyntaxTree* ast = treeBuilderController.getTree(sourceCode);
     
     return 0;
 }
