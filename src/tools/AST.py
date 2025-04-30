@@ -44,37 +44,44 @@ else:
     sys.exit(1)
 
 
-# Read codes from the provided file paths
+# Read codes from the provided file path
 with open(file, 'rb') as f:
     code = f.read()
 
 # Generate the AST for the provided code snippets
 tree = parser.parse(code)
 
-# Recursive function to print the AST with indentation
-def print_ast(node, level=0):
-    print("\t" * level + f"{node.type} [{node.start_point} - {node.end_point}]")
-    for child in node.children:
-        print_ast(child, level + 1)
+def dfs_ast(node, level=0, node_list=None):
+  """
+  Perform a depth-first search (DFS) on the AST and store the nodes in a list. 
+  Preorder traversal is used to visit the nodes.
 
-# Print the entire AST
-print_ast(tree.root_node)
+  Parameters
+  ---
+  node: `Tree Sitter Node` The current node in the AST.
 
-# # Recursive function to perform DFS and store nodes in a list
-# def dfs_ast(node, level=0, node_list=None):
-#     if node_list is None:
-#         node_list = []
-    
-#     # Append the current node's information to the list
-#     node_list.append((node.type, node.start_point, node.end_point, level))
-    
-#     # Recursively process child nodes
-#     for child in node.children:
-#         dfs_ast(child, level + 1, node_list)
-    
-#     return node_list
+  level: `int` The current level in the tree. Default is 0.
 
-# # Generate the list of nodes using DFS
-# ast_nodes = dfs_ast(tree.root_node)
+  node_list: `list` The list to store the nodes. Default is None.
 
-# print(ast_nodes)
+  Returns
+  ---
+  node_list: `list` The list of nodes in the AST.
+  """
+  if node_list is None:
+      node_list = []
+  
+  node_list.append((node.type, level))
+
+  # Recursively process child nodes
+  for child in node.children:
+      dfs_ast(child, level + 1, node_list)
+  
+  return node_list
+
+# Generate the list of nodes using DFS
+ast_nodes = dfs_ast(tree.root_node)
+
+# Output.txt
+for element in ast_nodes:
+    print(f"{element[0]} {element[1]}")
