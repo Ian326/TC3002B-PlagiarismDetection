@@ -51,4 +51,30 @@ with open(file, 'rb') as f:
 # Generate the AST for the provided code snippets
 tree = parser.parse(code)
 
-print("Tree 1 root:", tree.root_node)
+# Recursive function to print the AST with indentation
+def print_ast(node, level=0):
+    print("\t" * level + f"{node.type} [{node.start_point} - {node.end_point}]")
+    for child in node.children:
+        print_ast(child, level + 1)
+
+# Print the entire AST
+print_ast(tree.root_node)
+
+# # Recursive function to perform DFS and store nodes in a list
+# def dfs_ast(node, level=0, node_list=None):
+#     if node_list is None:
+#         node_list = []
+    
+#     # Append the current node's information to the list
+#     node_list.append((node.type, node.start_point, node.end_point, level))
+    
+#     # Recursively process child nodes
+#     for child in node.children:
+#         dfs_ast(child, level + 1, node_list)
+    
+#     return node_list
+
+# # Generate the list of nodes using DFS
+# ast_nodes = dfs_ast(tree.root_node)
+
+# print(ast_nodes)

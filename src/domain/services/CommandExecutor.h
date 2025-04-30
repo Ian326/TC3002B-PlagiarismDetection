@@ -20,7 +20,6 @@ class CommandExecutor {
     public:
         CommandExecutor();
         ~CommandExecutor();
-        
         static std::string execute(std::string&);
 };
 
