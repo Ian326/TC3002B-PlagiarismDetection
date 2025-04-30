@@ -15,9 +15,19 @@ class TreeBuilderService {
         AbstractSyntaxTree* build(std::filesystem::path&, std::filesystem::path&);
 };
 
+
+/**
+ * @brief Constructor for the TreeBuilderService class.
+ */
 TreeBuilderService::TreeBuilderService(){}
 
+
+/**
+ * @brief Destructor for the TreeBuilderService class.
+ */
 TreeBuilderService::~TreeBuilderService(){}
+
+
 
 AbstractSyntaxTree* TreeBuilderService::build(std::filesystem::path &original, std::filesystem::path& plagiarized) {
     std::filesystem::path path = "tools/AST.py";
