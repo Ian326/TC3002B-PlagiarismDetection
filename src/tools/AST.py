@@ -83,5 +83,5 @@ def dfs_ast(node, level=0, node_list=None):
 ast_nodes = dfs_ast(tree.root_node)
 
 # Output.txt
-for element in ast_nodes:
-    print(f"{element[0]} {element[1]}")
+for i in range(len(ast_nodes)):
+    print(f"{ast_nodes[i][0]} {ast_nodes[i][1]}")

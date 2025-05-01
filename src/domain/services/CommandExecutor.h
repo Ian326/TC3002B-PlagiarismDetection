@@ -42,8 +42,8 @@ CommandExecutor::~CommandExecutor(){}
  * @throws std::runtime_error if the command cannot be executed.
  * @return Generates a file with the output of the command and returns its path.
  */
-std::string CommandExecutor::execute(std::string& command) {;
-    char buffer[128];
+std::string CommandExecutor::execute(std::string& command) {
+   char buffer[128];
     std::string result = "";
     
     std::FILE* pipe = popen(command.c_str(), "r");
