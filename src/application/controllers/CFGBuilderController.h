@@ -1,6 +1,11 @@
 #ifndef CFGBUILDERCONTROLLER_H
 #define CFGBUILDERCONTROLLER_H
 
+#include<string>
+#include "../../domain/entities/UGraph.h"
+#include "../../domain/entities/AbstractSyntaxTree.h"
+#include "../services/CFGBuilderService.h"
+
 
 /**
  * @class CFGBuilderController
@@ -10,7 +15,7 @@ class CFGBuilderController {
     public:
         CFGBuilderController();
         ~CFGBuilderController();
-        
+        UGraph<std::string>* getGraph(AbstractSyntaxTree*); 
 };
 
 
@@ -24,5 +29,16 @@ CFGBuilderController::CFGBuilderController(){}
  * @brief Destructor for the CFGBuilderController class.
  */
 CFGBuilderController::~CFGBuilderController(){}
+
+
+/**
+ * @brief Call CFGBuilderService to generate Control Flow Graph.
+ * @param ast ast to process
+ * @return UGraph representing the CFG
+ */
+UGraph<std::string>* CFGBuilderController::getGraph(AbstractSyntaxTree* ast) {
+    CFGBuilderService builder;
+    return builder.build(ast);
+}
 
 #endif // CFGBUILDERCONTROLLER_H

@@ -1,12 +1,7 @@
 int sum(int x, int y)
 {
-    if (x < 5)
-    {
-        x++;
-    }
-    else
-    {
-        x--;
-    }
-    y = x;
+    int a = x;
+    int b = y;
+    int c = a + b;
+    return c;
 }

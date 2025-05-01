@@ -1,6 +1,7 @@
 #ifndef UGRAPH_H
 #define UGRAPH_H
 
+#include <iterator>
 #include <iostream>
 #include <sstream>
 #include <set>
@@ -16,7 +17,7 @@ class UGraph {
     private:
         bool direction;
         std::set<Vertex> vertexes;
-        std::map<Vertex, set<Vertex>> edges;
+        std::map<Vertex, std::set<Vertex>> edges;
     
     public:
         UGraph(bool direction = true);
@@ -31,7 +32,7 @@ class UGraph {
  * @brief Constructor for the UGraph class (defaults to a directed graph).
  */
 template<class Vertex>
-UGraph<Vertex>::UGraph(bool direction = true){
+UGraph<Vertex>::UGraph(bool direction) {
     this->direction = direction;
 }
 
@@ -51,18 +52,18 @@ UGraph<Vertex>::~UGraph(){}
  */
  template<class Vertex>
 void UGraph<Vertex>::addEdge(Vertex from, Vertex to){
-    std::set<Vertex>::iterator it;
+    typename std::set<Vertex>::iterator it;
 
     it = vertexes.find(from);
-    if (it == vertex.end()){
+    if (it == vertexes.end()) {
         vertexes.insert(from);
-        edges.insert(std::make_pair<Vertex, std::set<Vertex>>(from, std::set<Vertex>));
+        edges.insert(std::make_pair(from, std::set<Vertex>()));
     }
 
     it = vertexes.find(to);
-    if (it == vertex.end()){
+    if (it == vertexes.end()) {
         vertexes.insert(to);
-        edges.insert(std::make_pair<Vertex, std::set<Vertex>>(to, std::set<Vertex>));
+        edges.insert(std::make_pair(to, std::set<Vertex>()));
     }
 
     edges[from].insert(to);
@@ -100,15 +101,15 @@ std::set<Vertex> UGraph<Vertex>::getConnectionFrom(Vertex v) const {
 template<class Vertex>
 std::string UGraph<Vertex>::toString() const {
     std::stringstream ss;
-    std::set<Vertex>::iterator vertexItr, edgeItr;
+    typename std::set<Vertex>::iterator vertexItr, edgeItr;
     
     for(vertexItr = vertexes.begin(); vertexItr != vertexes.end(); vertexItr++) {
-        ss << (*vertexItr) << "\t";
+        ss << "Vertex: " << (*vertexItr) << "\nConnections: ";
 
         for(edgeItr = edges.at((*vertexItr)).begin(); edgeItr != edges.at((*vertexItr)).end(); edgeItr++) {
             ss << (*edgeItr) << "\t";
         }
-        ss << "\n";
+        ss << "\n\n";
     }
     ss << "\n";
     

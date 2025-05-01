@@ -17,8 +17,9 @@ class AbstractSyntaxTree {
         AbstractSyntaxTree(TreeNode* root);
         ~AbstractSyntaxTree();
         TreeNode* getRoot();
+        std::vector<TreeNode*> getChildren(TreeNode* parent);
         void addChild(TreeNode* parent, TreeNode* child);
-        void print(TreeNode* node, int level);
+        std::string toString(std::string, TreeNode* node, int level);
 };
 
 
@@ -46,6 +47,16 @@ TreeNode* AbstractSyntaxTree::getRoot() {
 
 
 /**
+ * @brief Get children of a Node in the AST
+ * @param parent Parent node
+ * @return TreeNode vector referencing all child nodes
+ */
+std::vector<TreeNode*> AbstractSyntaxTree::getChildren(TreeNode* parent) {
+    return parent->childs;
+}
+
+
+/**
  * @brief Add a child Node into a Node in the AST
  * @param parent Parent node
  * @param child Child node to be added
@@ -60,17 +71,20 @@ void AbstractSyntaxTree::addChild(TreeNode* parent, TreeNode* child) {
  * @param node Node to be printed
  * @param level Level of the node in the tree
  */
-void AbstractSyntaxTree::print(TreeNode* node, int level = 0) { 
+ std::string AbstractSyntaxTree::toString(std::string treeString, TreeNode* node, int level) {
     if (!node) {
-        return;
+        return treeString;
     }
 
     TreeNode* aux = node;
-    std::cout << StringService::characterRepeater('.', level) <<aux -> getTag() << std::endl;
+    treeString += StringService::characterRepeater('.', level) + aux->getTag() + "\n";
 
-    for (TreeNode* child : aux->childs){
-        print(child, level + 1);
+    for (TreeNode* child : aux->childs) {
+        treeString = toString(treeString, child, level + 1);
     }
+
+    return treeString;
 }
+
 
 #endif // ABSTRACTSYNTAXTREE_H

@@ -1,0 +1,43 @@
+import_declaration
+
+class_declaration
+    class_body
+        method_declaration
+        field_declaration
+        constructor_declaration
+        class_declaration
+
+method_declaration
+    formal_parameters
+    block
+
+constructor_declaration
+    formal_parameters
+    constructor_body
+
+if_statement
+    block
+    block
+
+for_statement
+    local_variable_declaration
+    binary_expression
+    update_expression
+    block
+
+try_statement
+    block
+
+catch_clause
+    catch_formal_parameter
+    block
+
+block
+    local_variable_declaration
+    expression_statement
+    return-statement
+
+constructor_body
+    local_variable_declaration
+    expression_statement
+

@@ -51,7 +51,7 @@ ASTBuilderService::~ASTBuilderService(){}
  * @return Abstract Syntax Tree (AST)
  */
 AbstractSyntaxTree* ASTBuilderService::build(std::filesystem::path &sourceCode) {
-    std::string language = sourceCode.extension().string() == "java" ? "java" : "cpp";
+    std::string language = sourceCode.extension().string() == ".java" ? "java" : "cpp";
     std::string grammar = language == "java" ? JAVA.string() : C.string();
     std::filesystem::path outputLocation = TEMP_DIR / "output.txt";
     
