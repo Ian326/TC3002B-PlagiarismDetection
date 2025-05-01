@@ -12,7 +12,7 @@ int main(){
     ASTBuilderController treeBuilderController;
     AbstractSyntaxTree* tree = treeBuilderController.getTree(sourceCode);
 
-    // tree->print(tree->getRoot(), 0);
+    tree->print(tree->getRoot());
 
     return 0;
 }

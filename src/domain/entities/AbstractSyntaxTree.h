@@ -2,6 +2,7 @@
 #define ABSTRACTSYNTAXTREE_H
 
 #include "./TreeNode.h"
+#include "../services/StringService.h"
 
 
 /**
@@ -24,7 +25,7 @@ class AbstractSyntaxTree {
 /**
  * @brief Constructor for the AbstractSyntaxTree class.
  */
-AbstractSyntaxTree::AbstractSyntaxTree(TreeNode* root){
+AbstractSyntaxTree::AbstractSyntaxTree(TreeNode* root) {
     this->root = root;
 }
 
@@ -59,14 +60,17 @@ void AbstractSyntaxTree::addChild(TreeNode* parent, TreeNode* child) {
  * @param node Node to be printed
  * @param level Level of the node in the tree
  */
-void AbstractSyntaxTree::print(TreeNode* node, int level=0) { 
-    TreeNode* aux = node;
-    std::cout << aux -> getTag();
+void AbstractSyntaxTree::print(TreeNode* node, int level = 0) { 
+    if (!node) {
+        return;
+    }
 
-    for (TreeNode* childs : aux->childs){
-        print(aux, level + 1);
+    TreeNode* aux = node;
+    std::cout << StringService::generateSpaces(level) <<aux -> getTag() << std::endl;
+
+    for (TreeNode* child : aux->childs){
+        print(child, level + 1);
     }
 }
-
 
 #endif // ABSTRACTSYNTAXTREE_H

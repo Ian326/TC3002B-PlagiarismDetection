@@ -74,11 +74,8 @@ AbstractSyntaxTree* ASTBuilderService::build(std::filesystem::path &sourceCode) 
 
     while (std::getline(input, nextLine) && nextLine != "EOF"){
         splitted = StringService::split(nextLine, ' ');
-        std::cout << nextLine << std::endl;
         preOrderList.push_back(std::make_pair(splitted[0], stoi(splitted[1])));
     }
-    std::cout << "Salida del while";
-
 
     input.close();
     
