@@ -12,7 +12,7 @@
 class StringService {
     public:
         static std::vector<std::string> split(std::string&, char);
-        static std::string generateSpaces(int);
+        static std::string characterRepeater(char, int);
 };
 
 
@@ -42,15 +42,16 @@ std::vector<std::string> StringService::split(std::string& str, char delimiter) 
 
 
 /**
- * @brief Generate a string with n spaces
+ * @brief Generates a string with character c, n times
+ * @param c Character to repeat
  * @param n Number of spaces to generate
  * @return String with n spaces
  */
-std::string StringService::generateSpaces(int n) {
+std::string StringService::characterRepeater(char c, int n) {
     std::string spaces = "";
     
     for(int i = 0; i < n; i++){
-        spaces += " ";
+        spaces += ".";
     }
 
     return spaces;

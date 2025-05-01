@@ -66,7 +66,7 @@ void AbstractSyntaxTree::print(TreeNode* node, int level = 0) {
     }
 
     TreeNode* aux = node;
-    std::cout << StringService::generateSpaces(level) <<aux -> getTag() << std::endl;
+    std::cout << StringService::characterRepeater('.', level) <<aux -> getTag() << std::endl;
 
     for (TreeNode* child : aux->childs){
         print(child, level + 1);
