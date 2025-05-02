@@ -11,7 +11,7 @@
  */
 class AbstractSyntaxTree {
     private:
-        TreeNode* root;
+        TreeNode* root = nullptr;
         
     public:
         AbstractSyntaxTree(TreeNode* root);
@@ -85,6 +85,5 @@ void AbstractSyntaxTree::addChild(TreeNode* parent, TreeNode* child) {
 
     return treeString;
 }
-
 
 #endif // ABSTRACTSYNTAXTREE_H

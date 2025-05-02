@@ -6,6 +6,7 @@
 #include <sstream>
 #include <set>
 #include <map>
+#include<vector>
 
 
 /**
@@ -23,10 +24,11 @@ class UGraph {
         UGraph(bool direction = true);
         ~UGraph();
         void addEdge(Vertex from, Vertex to);
-        std::set<Vertex> getVertexes() const;
-	    std::set<Vertex> getConnectionFrom(Vertex v) const;
+        std::vector<Vertex> getVertexes() const;
+	    std::vector<Vertex> getConnectionFrom(Vertex v) const;
         std::string toString() const;
 };
+
 
 /**
  * @brief Constructor for the UGraph class (defaults to a directed graph).
@@ -50,7 +52,7 @@ UGraph<Vertex>::~UGraph(){}
  * @param from Vertex stored.
  *             If the graph is undirected, it will also store the vertex where the connection originates
  */
- template<class Vertex>
+template<class Vertex>
 void UGraph<Vertex>::addEdge(Vertex from, Vertex to){
     typename std::set<Vertex>::iterator it;
 
@@ -75,12 +77,13 @@ void UGraph<Vertex>::addEdge(Vertex from, Vertex to){
 
 
 /**
- * @brief This mehtod get all the vertexes in the graph.
+ * @brief This method gets all the vertexes in the graph.
  * @return Set of vertexes
  */
 template<class Vertex>
-std::set<Vertex> UGraph<Vertex>::getVertexes() const{
-    return this->vertexes;
+std::vector<Vertex> UGraph<Vertex>::getVertexes() const{
+    std::vector<Vertex> result(vertexes.begin(), vertexes.end());
+	return result;
 }
 
 
@@ -88,10 +91,12 @@ std::set<Vertex> UGraph<Vertex>::getVertexes() const{
  * @brief This method get all the connections from one vertex.
  * @return Set of vertexes
  */
-template<class Vertex>
-std::set<Vertex> UGraph<Vertex>::getConnectionFrom(Vertex v) const {
-    return this->edges[v];
+ template<class Vertex>
+ std::vector<Vertex> UGraph<Vertex>::getConnectionFrom(Vertex v) const {
+    std::vector<Vertex> result(edges.at(v).begin(), edges.at(v).end());
+	return result;
 }
+ 
 
 
 /**

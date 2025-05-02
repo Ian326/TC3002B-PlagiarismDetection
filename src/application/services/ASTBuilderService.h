@@ -44,7 +44,6 @@ ASTBuilderService::ASTBuilderService(){}
 ASTBuilderService::~ASTBuilderService(){}
 
 
-
 /**
  * @brief Call tree-sitter to generate AST.
  * @param srcCode code to parse
@@ -72,7 +71,7 @@ AbstractSyntaxTree* ASTBuilderService::build(std::filesystem::path &sourceCode) 
         return nullptr;
     }
 
-    while (std::getline(input, nextLine) && nextLine != "EOF"){
+    while (std::getline(input, nextLine) && nextLine != "EOF") {
         splitted = StringService::split(nextLine, ' ');
         preOrderList.push_back(std::make_pair(splitted[0], stoi(splitted[1])));
     }
@@ -102,7 +101,7 @@ AbstractSyntaxTree* ASTBuilderService::build(std::filesystem::path &sourceCode) 
  * @param preOrderList list of pairs with node tag and level
  * @param tree AST where nodes will be added
  */
-void ASTBuilderService::buildTree(std::vector<std::pair<std::string,int>>& preOrderList, AbstractSyntaxTree* tree){
+void ASTBuilderService::buildTree(std::vector<std::pair<std::string,int>>& preOrderList, AbstractSyntaxTree* tree) {
     std::stack<std::pair<TreeNode*, int>> parents;
 
     parents.push(std::make_pair(tree->getRoot(), preOrderList[0].second));

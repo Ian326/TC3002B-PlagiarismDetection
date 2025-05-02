@@ -16,6 +16,8 @@ constructor_declaration
     constructor_body
 
 if_statement
+    parenthesized_expression
+        binary_expression
     block
     block
 
@@ -24,6 +26,12 @@ for_statement
     binary_expression
     update_expression
     block
+
+while_statement
+    parenthesized_expression
+        binary_expression
+    block
+
 
 try_statement
     block

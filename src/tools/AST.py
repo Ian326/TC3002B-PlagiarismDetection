@@ -18,6 +18,10 @@ sys: Library for system-specific parameters and functions.
 '''
 from tree_sitter import Language, Parser
 import sys
+import warnings
+
+# Ignore all warnings
+warnings.filterwarnings("ignore")
 
 # Define the constants for the Parser
 lang_grammar, path_grammar, file = sys.argv[1], sys.argv[2], sys.argv[3]
