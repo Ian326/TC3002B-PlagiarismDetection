@@ -1,26 +1,19 @@
 public class HelloWorld2 {
     public static void main(String[] args) {
-        int k = 0;
-        if (k == 0) {
-            System.out.println("Esto no salee!");
-            if (k == 0) {
-            System.out.println("Esto no salee!");
+        int i = 0;
+        if (i == 0) {
+            System.out.println("Hello, World!");
+            if (i == 0) {
+                System.out.println("Hello, World!");
             } else {
-                System.out.println("asdasd12e!");
-                
+                System.out.println("Goodbye, World!");
+
             }
         } else {
-            System.out.println("asdasd12e!");
-            
-        }
+            System.out.println("Goodbye, World!");
 
-        for (int a = 0; a < 5; a++) {
-            System.out.println("Loop iteration: " + a);
         }
-        while (k < 5) {
-            System.out.println("While loop iteration: " + k);
-            k++;
-        }
+        System.out.println("This is a test.");
 
     }
 }
