@@ -17,15 +17,16 @@ template<class Vertex>
 class UGraph {
     private:
         bool direction;
-        std::set<Vertex> vertexes;
-        std::map<Vertex, std::set<Vertex>> edges;
+        std::set<std::pair<int, Vertex>> vertexes;
+        std::map<std::pair<int, Vertex>, std::set<std::pair<int, Vertex>>> edges;
     
     public:
         UGraph(bool direction = true);
         ~UGraph();
-        void addEdge(Vertex from, Vertex to);
-        std::vector<Vertex> getVertexes() const;
-	    std::vector<Vertex> getConnectionFrom(Vertex v) const;
+        void addEdge(std::pair<int, Vertex> from, std::pair<int, Vertex> to);
+        std::vector<std::pair<int, Vertex>> getVertexes() const;
+	    std::vector<std::pair<int, Vertex>> getConnectionsFrom(std::pair<int, Vertex> v) const;
+        std::vector<std::pair<int, Vertex>> getConnectionsFrom(std::string) const;
         std::string toString() const;
 };
 
@@ -53,19 +54,19 @@ UGraph<Vertex>::~UGraph(){}
  *             If the graph is undirected, it will also store the vertex where the connection originates
  */
 template<class Vertex>
-void UGraph<Vertex>::addEdge(Vertex from, Vertex to){
-    typename std::set<Vertex>::iterator it;
+void UGraph<Vertex>::addEdge(std::pair<int, Vertex> from, std::pair<int, Vertex> to){
+    typename std::set<std::pair<int, Vertex>>::iterator it;
 
     it = vertexes.find(from);
     if (it == vertexes.end()) {
         vertexes.insert(from);
-        edges.insert(std::make_pair(from, std::set<Vertex>()));
+        edges.insert(std::make_pair(from, std::set<std::pair<int, Vertex>>()));
     }
 
     it = vertexes.find(to);
     if (it == vertexes.end()) {
         vertexes.insert(to);
-        edges.insert(std::make_pair(to, std::set<Vertex>()));
+        edges.insert(std::make_pair(to, std::set<std::pair<int, Vertex>>()));
     }
 
     edges[from].insert(to);
@@ -81,8 +82,8 @@ void UGraph<Vertex>::addEdge(Vertex from, Vertex to){
  * @return Set of vertexes
  */
 template<class Vertex>
-std::vector<Vertex> UGraph<Vertex>::getVertexes() const{
-    std::vector<Vertex> result(vertexes.begin(), vertexes.end());
+std::vector<std::pair<int, Vertex>> UGraph<Vertex>::getVertexes() const{
+    std::vector<std::pair<int, Vertex>> result(vertexes.begin(), vertexes.end());
 	return result;
 }
 
@@ -91,13 +92,32 @@ std::vector<Vertex> UGraph<Vertex>::getVertexes() const{
  * @brief This method get all the connections from one vertex.
  * @return Set of vertexes
  */
- template<class Vertex>
- std::vector<Vertex> UGraph<Vertex>::getConnectionFrom(Vertex v) const {
+template<class Vertex>
+std::vector<std::pair<int, Vertex>> UGraph<Vertex>::getConnectionsFrom(std::pair<int, Vertex> v) const {
     std::vector<Vertex> result(edges.at(v).begin(), edges.at(v).end());
 	return result;
 }
  
+template<class Vertex>
+std::vector<std::pair<int, Vertex>> UGraph<Vertex>::getConnectionsFrom(std::string tag) const {
+    std::vector<std::pair<int, Vertex>> ret;
+    std::map<Vertex,int> connections;
+    typename std::map<Vertex,int>::iterator it;
 
+    for (const auto& pair : edges) {
+        if (pair.first.second == tag){
+            for (const auto& nodeConnections : pair.second) {
+                connections[nodeConnections.second]++;
+            }
+        }
+    }
+
+    for (const auto& pair : connections) {
+        ret.push_back(std::make_pair(pair.second, pair.first));
+    }
+
+    return ret;
+}
 
 /**
  * @brief This method returns the graph in a readable string.
@@ -106,13 +126,13 @@ std::vector<Vertex> UGraph<Vertex>::getVertexes() const{
 template<class Vertex>
 std::string UGraph<Vertex>::toString() const {
     std::stringstream ss;
-    typename std::set<Vertex>::iterator vertexItr, edgeItr;
+    typename std::set<std::pair<int, Vertex>>::iterator vertexItr, edgeItr;
     
     for(vertexItr = vertexes.begin(); vertexItr != vertexes.end(); vertexItr++) {
-        ss << "Vertex: " << (*vertexItr) << "\nConnections: ";
+        ss << "Vertex " << vertexItr->first << ": " << vertexItr->second << "\nConnections:\n";
 
-        for(edgeItr = edges.at((*vertexItr)).begin(); edgeItr != edges.at((*vertexItr)).end(); edgeItr++) {
-            ss << (*edgeItr) << "\t";
+        for(edgeItr = edges.at(std::make_pair(vertexItr->first,vertexItr->second)).begin(); edgeItr != edges.at(std::make_pair(vertexItr->first,vertexItr->second)).end(); edgeItr++) {
+            ss << "(" << edgeItr->first << "," << edgeItr->second << ")" << "\n";
         }
         ss << "\n\n";
     }

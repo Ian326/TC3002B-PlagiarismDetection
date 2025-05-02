@@ -18,6 +18,7 @@ class CFGBuilderService {
     private:
         static std::set<std::string> reservedWords;
         static std::set<std::string> ignoredWords;
+        std::string blockAnalyzer(AbstractSyntaxTree*, TreeNode*);
     
     public:
         CFGBuilderService();
@@ -45,7 +46,8 @@ CFGBuilderService::~CFGBuilderService(){}
  */
 UGraph<std::string>* CFGBuilderService::build(AbstractSyntaxTree* tree){
     UGraph<std::string>* graph = new UGraph<std::string>(true);
-    std::string prevVertex = "Entry";
+    int count = 0;
+    std::pair<int, std::string> prevVertex = std::make_pair(count, "Entry");
     std::stack<TreeNode*> treeStack;
     
     treeStack.push(tree->getRoot());
@@ -55,32 +57,19 @@ UGraph<std::string>* CFGBuilderService::build(AbstractSyntaxTree* tree){
         treeStack.pop();
         std::set<std::string>::iterator it = reservedWords.find(currentNode->getTag());
         
-        // Si encontramos un "block"
         if (it != reservedWords.end()) {
-            std::stack<TreeNode*> subTreeStack;
-            std::string newTag = "";
-
-            subTreeStack.push(currentNode);
-            
-            // Combinamos los tags de las hojas
-            while(!subTreeStack.empty()) {
-                TreeNode* target = subTreeStack.top();
-                subTreeStack.pop();
-
-                if (tree->getChildren(target).empty()) {
-                    it = ignoredWords.find(target->getTag());
-
-                    if (it == ignoredWords.end())
-                        newTag = target->getTag() + newTag;
-                } else {
-                    for (TreeNode* child : tree->getChildren(target)) {
-                        subTreeStack.push(child);
-                    }
+            if (currentNode->getTag() == "block") {
+                for(TreeNode* child : tree->getChildren(currentNode)){
+                    std::set<std::string>::iterator itr = ignoredWords.find(child->getTag());
+                    if (itr != ignoredWords.end()) continue;
+                
+                    std::string tag = blockAnalyzer(tree, child);
+                    
+                    graph->addEdge(prevVertex, make_pair(++count, tag));
+                    prevVertex = make_pair(count, tag);
+                    
                 }
-            } 
-            
-            graph->addEdge(prevVertex, newTag);
-            prevVertex = newTag;
+            }
         } else {
             for(TreeNode* child : tree->getChildren(currentNode)) {
                 treeStack.push(child);
@@ -88,6 +77,39 @@ UGraph<std::string>* CFGBuilderService::build(AbstractSyntaxTree* tree){
         }
     }
     return graph;
+}
+
+
+/**
+ * @brief Control flow analysis for blocks
+ * @param tree AST being analyzed
+ * @param subTreeRoot block starting point
+ * @return tag formed by combining all leaf nodes of given root
+ */
+std::string CFGBuilderService::blockAnalyzer(AbstractSyntaxTree* tree, TreeNode* subTreeRoot) {
+    std::stack<TreeNode *> subTreeStack;
+    std::string newTag = "";
+
+    subTreeStack.push(subTreeRoot);
+
+    // Combinamos los tags de las hojas
+    while (!subTreeStack.empty()) {
+        TreeNode *target = subTreeStack.top();
+        subTreeStack.pop();
+
+        if (tree->getChildren(target).empty())
+        {
+            std::set<std::string>::iterator it = ignoredWords.find(target->getTag());
+
+            if (it == ignoredWords.end())
+                newTag = target->getTag() + newTag;
+        } else {
+            for (TreeNode *child : tree->getChildren(target)) {
+                subTreeStack.push(child);
+            }
+        }
+    }
+        return newTag;
 }
 
 std::set<std::string> CFGBuilderService::reservedWords = []() {
