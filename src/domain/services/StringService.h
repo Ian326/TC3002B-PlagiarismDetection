@@ -12,6 +12,7 @@
 class StringService {
     public:
         static std::vector<std::string> split(std::string&, char);
+        static std::vector<std::string> divideInTwo(std::string&, char);
         static std::string characterRepeater(char, int);
 };
 
@@ -35,6 +36,35 @@ std::vector<std::string> StringService::split(std::string& str, char delimiter) 
             aux += str[i];
         }
     }
+    splitted.push_back(aux);
+
+    return splitted;
+}
+
+/**
+ * @brief Split a string with given delimiter
+ * @param str Sentence to split
+ * @param delimiter Char that marks the end of a word
+ * @return Vector with splitted words
+ */
+ std::vector<std::string> StringService::divideInTwo(std::string& str, char delimiter) {
+    std::vector<std::string> splitted;
+    std::string aux = "";
+
+    int i = 0;
+    for (; i < str.size(); i++){
+        if (str[i] == delimiter){
+            splitted.push_back(aux);
+            aux = "";
+            break;
+        }
+        aux += str[i];
+    }
+
+    for (; i < str.size(); i++){
+       aux +=  str[i];
+    }  
+
     splitted.push_back(aux);
 
     return splitted;

@@ -3,7 +3,6 @@
 
 #include<string>
 #include "../../domain/entities/UGraph.h"
-#include "../../domain/entities/AbstractSyntaxTree.h"
 #include "../services/CFGBuilderService.h"
 
 
@@ -15,7 +14,7 @@ class CFGBuilderController {
     public:
         CFGBuilderController();
         ~CFGBuilderController();
-        UGraph<std::string>* getGraph(AbstractSyntaxTree*); 
+        UGraph<std::string>* getGraph(std::filesystem::path&); 
 };
 
 
@@ -36,9 +35,9 @@ CFGBuilderController::~CFGBuilderController(){}
  * @param ast ast to process
  * @return UGraph representing the CFG
  */
-UGraph<std::string>* CFGBuilderController::getGraph(AbstractSyntaxTree* ast) {
+UGraph<std::string>* CFGBuilderController::getGraph(std::filesystem::path& sourceCode) {
     CFGBuilderService builder;
-    return builder.build(ast);
+    return builder.build(sourceCode);
 }
 
 #endif // CFGBUILDERCONTROLLER_H
