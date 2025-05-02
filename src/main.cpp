@@ -25,16 +25,17 @@ int main() {
 
     ASTBuilderController treeBuilderController;
     AbstractSyntaxTree* firstTree = treeBuilderController.getTree(firstPath);
-    AbstractSyntaxTree* secondTree = treeBuilderController.getTree(secondPath);
+    // AbstractSyntaxTree* secondTree = treeBuilderController.getTree(secondPath);
 
     CFGBuilderController cfgBuilderController;
     UGraph<string>* firstGraph = cfgBuilderController.getGraph(firstTree);
-    UGraph<string>* secondGraph = cfgBuilderController.getGraph(secondTree);
+    //UGraph<string>* secondGraph = cfgBuilderController.getGraph(secondTree);
+    cout << firstGraph->toString() << endl;
 
     SimilarityController similarityController;
-    similarityController.getSimilarity(firstGraph, secondGraph);
-   // cout << firstGraph->toString() << endl;
-   // cout << "Calculated Similarity: " << similarityController.getSimilarity(firstGraph, secondGraph) << endl;
+    // similarityController.getSimilarity(firstGraph, secondGraph);
+   
+    // cout << "Calculated Similarity: " << similarityController.getSimilarity(firstGraph, secondGraph) << endl;
 
     return 0;
 }

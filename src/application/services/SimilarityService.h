@@ -73,7 +73,6 @@ void SimilarityService::fillMatrix(std::vector<std::string>& bagOfTokens, std::v
     std::vector<std::pair<int, std::string>>::iterator it;
 
     for (int i = 0; i < bagOfTokens.size(); i++) {
-        std::cout << "\nITERACIÓN " << i << std::endl;
         std::string keyToken = bagOfTokens[i];
         
         // Verificamos que el token exista en el grafo, sino continuamos
@@ -83,39 +82,23 @@ void SimilarityService::fillMatrix(std::vector<std::string>& bagOfTokens, std::v
         if (it == vertexes.end()) continue;
         
         for (int j = 0; j < bagOfTokens.size(); j++) {
-            std::cout << "\nAnalizando " << bagOfTokens[i] << " con " << bagOfTokens[j] << std::endl;
             std::vector<std::pair<int, std::string>> connections = graph->getConnectionsFrom(bagOfTokens[i]);
+            int total = 0;
             for(auto p : connections){
-                std::cout << "Frecuencia: " << p.first << ". Token: " << p.second << std::endl;
+                total += p.first;
             }
             std::string valueToken = bagOfTokens[j];
             it = std::find_if(connections.begin(), connections.end(), [valueToken](const std::pair<int, std::string>& p) {
                 return p.second == valueToken;
             });
             if (it == connections.end()){
-                std::cout << "Nos fuimos, no hay coinexiones " << std::endl;
                 continue;
             }
             
-            if (connections.size() > 0) {
-                matrix[i][j] = (double)it->first / connections.size();
-            }
+            matrix[i][j] = (double)it->first / total;
+           
         }
     }
-
-    std::cout << "\n\n\nBoW \n";
-    for(std::string s : bagOfTokens){
-        std::cout << s << "   " ;
-    }
-
-    std::cout << "\nMarkov \n";
-    for (std::vector<double> row : matrix){
-        for(double column : row){
-            std::cout << column << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
 }
 
 
