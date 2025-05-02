@@ -198,15 +198,13 @@ class CFGBuilder:
             return {"entry": cond_node, "exit": break_exits + [cond_node]}
         
         elif node.type == "do_statement":
-            body_node = node.child_by_field_name("body")
             cond_node = self.new_node(node, f"while {self.get_text(node.child_by_field_name('condition'))}")
+            body = self._visit(node.child_by_field_name("body"))
 
             self.loop_stack.append((cond_node, []))
 
-            body = self._visit(body_node)
-
-            self.connect_all(body["exit"], cond_node)  # Body to condition
             self.graph.add_edge(cond_node, body["entry"])  # Loop back if condition true
+            self.connect_all(body["exit"], cond_node)  # Body to condition
 
             _, break_exits = self.loop_stack.pop()
             return {"entry": body["entry"], "exit": break_exits + [cond_node]}
@@ -286,6 +284,9 @@ class CFGBuilder:
         elif node.type == "return_statement":
             ret = self.new_node(node, self.get_text(node))
             return {"entry": ret, "exit": []}
+        
+        elif node.type in ["block_comment", "line_comment"]:
+            return {"entry": None, "exit": []}
 
         else:
             stmt = self.new_node(node, self.get_text(node))
