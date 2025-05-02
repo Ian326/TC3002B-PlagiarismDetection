@@ -66,9 +66,9 @@ repo/
 This project is licensed under the Creative Comons License. See the LICENSE file for details.
 
 ## Authors 👨‍💻
-José Armando Rosas Balderas
-Ramona Najera Fuentes
-Ian Joab Padron Corona
+- José Armando Rosas Balderas
+- Ramona Najera Fuentes
+- Ian Joab Padron Corona
 
 ## References 📄
 [1] [Bartoszuk M, Gagolewski M. SimilaR: R Code Clone and Plagiarism Detection. R Journal [Internet]. 2020 Jun 1 [cited 2025 Apr 4];12(1):367–85.](https://research.ebsco.com/linkprocessor/plink?id=1115fc70-4a08-3234-a931-e12b27951f62)
