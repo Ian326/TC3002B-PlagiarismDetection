@@ -25,8 +25,10 @@ class UGraph {
         ~UGraph();
         void addEdge(std::pair<int, Vertex> from, std::pair<int, Vertex> to);
         std::vector<std::pair<int, Vertex>> getVertexes() const;
-	    std::vector<std::pair<int, Vertex>> getConnectionsFrom(std::pair<int, Vertex> v) const;
+	    std::vector<std::pair<int, Vertex>> getConnectionsFrom(std::pair<int, Vertex>) const;
         std::vector<std::pair<int, Vertex>> getConnectionsFrom(std::string) const;
+        std::string getTagFrom(int) const;
+        std::pair<int, Vertex> getLastNode();
         std::string toString() const;
 };
 
@@ -97,7 +99,12 @@ std::vector<std::pair<int, Vertex>> UGraph<Vertex>::getConnectionsFrom(std::pair
     std::vector<Vertex> result(edges.at(v).begin(), edges.at(v).end());
 	return result;
 }
- 
+
+
+/**
+ * @brief Get connections for a given tag
+ * @return Vector with count for a given vertex
+ */
 template<class Vertex>
 std::vector<std::pair<int, Vertex>> UGraph<Vertex>::getConnectionsFrom(std::string tag) const {
     std::vector<std::pair<int, Vertex>> ret;
@@ -118,6 +125,40 @@ std::vector<std::pair<int, Vertex>> UGraph<Vertex>::getConnectionsFrom(std::stri
 
     return ret;
 }
+
+
+/**
+ * @brief Find tag for specified node
+ * @return Tag associated to the number or empty if not found
+ */
+template<class Vertex>
+std::string UGraph<Vertex>::getTagFrom(int node) const {
+    for (const auto& pair : vertexes) {
+        if (pair.first == node){
+            return pair.second;
+        }
+    }
+
+    return "";
+}
+
+
+/**
+ * @brief Checks node's numbers to identify last one
+ * @return Graph's last node
+ */
+template<class Vertex>
+std::pair<int, Vertex> UGraph<Vertex>::getLastNode() {
+    std::pair<int, Vertex> last;
+
+    for (const auto& pair : vertexes) {
+        if (pair.first > last.first){
+            last = pair;
+        }
+    }
+    return last;
+}
+
 
 /**
  * @brief This method returns the graph in a readable string.
