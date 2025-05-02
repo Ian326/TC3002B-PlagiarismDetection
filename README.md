@@ -72,5 +72,7 @@ Ian Joab Padron Corona
 
 ## References 📄
 [1] [Bartoszuk M, Gagolewski M. SimilaR: R Code Clone and Plagiarism Detection. R Journal [Internet]. 2020 Jun 1 [cited 2025 Apr 4];12(1):367–85.](https://research.ebsco.com/linkprocessor/plink?id=1115fc70-4a08-3234-a931-e12b27951f62)
+
 [2] [Raddam M., Majharoddin K., Hiren J. Detecting Source Code Plagiarism in Student Assignment Submissions Using Clustering Techniques. Journal of Techniques [Internet]. 2024 Jun 1 [cited 2025 Apr 4];6(2).](https://research.ebsco.com/linkprocessor/plink?id=cc5a02a7-6061-3ef1-849e-472a140c63f4)
+
 [3] [Guo D, Ren S. et. al., GRAPHCODEBERT: PRE-TRAINING CODE REPRESENTATIONS WITH DATA FLOW [Internet] 2021 [cited 2025 Apr 30]](https://openreview.net/pdf?id=jLoC4ez43PZ)
