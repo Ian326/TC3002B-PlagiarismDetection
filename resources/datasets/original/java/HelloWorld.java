@@ -14,6 +14,17 @@ public class HelloWorld {
             
         }
         System.out.println("This is a test.");
+        for (int j = 0; j < 5; j++) {
+            System.out.println("Loop iteration: " + j);
+        }
+        while (i < 5) {
+            System.out.println("While loop iteration: " + i);
+            i++;
+        }
+        do {
+            System.out.println("Do-while loop iteration: " + i);
+            i++;
+        } while (i < 10);
         
     }
 }
