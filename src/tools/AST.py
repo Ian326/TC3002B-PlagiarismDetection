@@ -1,21 +1,30 @@
 '''
-==================================================================================================
 AST Parser
-==================================================================================================
+--------------------------------------------------------------------------------------------------
 This file contains the code to parse the AST of a given code snippet using tree-sitter.
-==================================================================================================
-Authors: 
-  José Armando Rosas Balderas | A01704132
-  Ramona Najera Fuentes       | A01423596
-  Ian Joab Padron Corona      | A01708940
-Date: 2025-Apr-28
-==================================================================================================
-Libraries
 
-tree-stitter: Library for parsing source code into an AST.
-sys: Library for system-specific parameters and functions.
-==================================================================================================
+Authors
+--------------------------------------------------------------------------------------------------
+  * José Armando Rosas Balderas | A01704132
+  * Ramona Najera Fuentes       | A01423596
+  * Ian Joab Padron Corona      | A01708940
+
+**Date:** 2025-Apr-28
+
+Libraries
+--------------------------------------------------------------------------------------------------
+`tree-stitter`: Library for parsing source code into an AST.
+`sys`: Library for system-specific parameters and functions.
+`warnings`: Library for issuing warning messages.
+
+Usage
+--------------------------------------------------------------------------------------------------
+This script is used to parse the AST of a given code snippet using tree-sitter.
+```
+python AST.py <lang_grammar> <path_grammar> <file>
+```
 '''
+
 from tree_sitter import Language, Parser
 import sys
 import warnings
