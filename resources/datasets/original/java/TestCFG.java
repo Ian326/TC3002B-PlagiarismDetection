@@ -1,11 +1,13 @@
 public class TestCFG {
-    private static int suma(int x, int y){
-        return x + y;
-    }
     public static void main(String[] args) {
-        int x= 5;
-        int y = 5;
-        System.out.println(suma(x, y));
-
+        int i = 0;
+        if (i == 0) {
+            System.out.println("Welcome to Java");
+        } else {
+            System.out.println("Welcome to Java");
+        }
+        for (int j = 0; j < 10; j++) {
+            System.out.println("Yay!");
+        }
     }
 }

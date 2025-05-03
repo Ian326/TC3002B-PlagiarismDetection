@@ -1,3 +1,5 @@
+package plagarized.java;
+
 public class TestCFG {
     public static void main(String[] args) {
         int i = 0;
@@ -6,8 +8,10 @@ public class TestCFG {
         } else {
             System.out.println("Welcome to Java");
         }
-        for (int j = 0; j < 10; j++) {
+        int j = 0;
+        while (j < 10) {
             System.out.println("Yay!");
+            j++;
         }
     }
 }
