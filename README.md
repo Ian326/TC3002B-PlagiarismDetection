@@ -32,17 +32,17 @@ repo/
 │   │   └── services/
 │   │       ├── CommandExecutor.h
 │   │       └── StringService.h
-│   └tools/
-│    ├── AST.ipynb
-│    ├── AST.py
-│    └── grammarCompiler.py
+│   └── tools/
+│       ├── AST.ipynb
+│       ├── AST.py
+│       └── grammarCompiler.py
 ├── main.cpp
 ```
 
 ## Installation ⚙️
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/TC3002B-PlagiarismDetection.git
+   git clone https://github.com/Ian326/TC3002B-PlagiarismDetection.git
    ```
 2. Install pip dependencies:
     ```
@@ -50,10 +50,13 @@ repo/
     ```
 3. If you want to check a program AST, run `tools/AST.ipynb`
 
-4. If you want to check 2 programs similarity run `/src/main.cpp`
+4. If you want to check 2 programs similarity either run
+   ```/src/main.cpp```
+   OR (STRONGLY RECOMMENDED)
+   ```/src/tools/AST.ipynb```
 
 ## Usage ❔
-1. Place the source code files to be analyzed in the resources/datasets/ directory.
+1. Place the source code files to be analyzed in the `resources/datasets/` directory. In their corresponding folders for original/plagiarized.
 
 2. Compile & Run the main application:
     ```
@@ -61,6 +64,7 @@ repo/
     g++ main.cpp -o plagiarism-detector
     ./plagiarism-detector
     ```
+OR Execture the Jupyter Notebook <- STRONGLY RECOMMENDED
 
 ## License ✔️
 This project is licensed under the Creative Comons License. See the LICENSE file for details.
