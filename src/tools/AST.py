@@ -14,6 +14,10 @@ Authors
 Libraries
 --------------------------------------------------------------------------------------------------
 `tree-stitter`: Library for parsing source code into an AST.
+`networkx`: Library for creating and manipulating complex networks.
+`numpy`: Library for numerical computations in Python.
+`matplotlib`: Library for creating static, animated, and interactive visualizations in Python.
+`sklearn`: Library for machine learning in Python.
 `sys`: Library for system-specific parameters and functions.
 `warnings`: Library for issuing warning messages.
 
@@ -199,7 +203,9 @@ class CFGBuilder:
         
         elif node.type == "do_statement":
             cond_node = self.new_node(node, f"while {self.get_text(node.child_by_field_name('condition'))}")
+
             body = self._visit(node.child_by_field_name("body"))
+
 
             self.loop_stack.append((cond_node, []))
 
@@ -292,28 +298,108 @@ class CFGBuilder:
             stmt = self.new_node(node, self.get_text(node))
             return {"entry": stmt, "exit": [stmt]}
 
-def find_method_declaration(node):
+def set_parserGrammar(parser, lang_grammar, path_grammar):
     """
-    Recursively search for the first 'method_declaration' node in the AST.
+    Set the language grammar for the parser
 
-    Parameters:
+    Parameters
     ---
-    node: `Tree Sitter Node` The current node in the AST.
+    parser: `Parser`
+        The Tree-sitter parser instance
 
-    Returns:
-    ---
-    method_node: `Tree Sitter Node` The 'method_declaration' node if found, else None.
+    lang_grammar: `str`
+        The programming language grammar ('cpp' or 'java').
+
+    path_grammar: `str`
+        The path to the compiled grammar file.
     """
-    if node.type == "method_declaration":
-        return node
+    try:
+        parser.set_language(Language(path_grammar, lang_grammar))
+    except Exception as e:
+        print(f"[ERROR]: Failed to load {lang_grammar} language grammar. {e}")
+        sys.exit(1)
 
-    for child in node.children:
-        result = find_method_declaration(child)
-        if result:
-            return result
+def merge_CFGs(cfg_dict):
+    """
+    Given a dictionary of subCFG's, merge all into a single CFG with a 'root' node.
 
-    return None
+    Parameters
+    ---
+    cfg_dict: `dict` 
+        A dictionary where keys are method names and values are their corresponding CFGs.
 
+    Returns
+    ---
+    super_cfg: `Graph` A merged CFG with a 'root' node.
+    """
+    super_cfg = nx.DiGraph()
+    root_id = "root"
+    super_cfg.add_node(root_id, label="ROOT")
+
+    for method_name, method_cfg in cfg_dict.items():
+        # Rename method nodes to avoid conflicts
+        renamed_cfg = nx.relabel_nodes(
+            method_cfg, 
+            lambda n: f"{method_name}_{n}"
+        )
+
+        # Merge method graph into the super CFG
+        super_cfg.update(renamed_cfg)
+
+        # Find entry node — assume it's the only node with in-degree 0
+        entry_nodes = [n for n in renamed_cfg.nodes if renamed_cfg.in_degree(n) == 0]
+        if entry_nodes:
+            super_cfg.add_edge(root_id, entry_nodes[0], type="method_entry")
+
+    return super_cfg
+
+
+def build_CFG(tree, source_code, cfg_builder_class):
+    """
+    Extracts a CFG for each method in a Java class.
+
+    Parameters
+    ---
+    tree: `Tree Sitter Tree` 
+        The Tree-sitter parsed tree
+
+    source_code: `bytes` 
+        The raw source code
+
+    cfg_builder_class: `CFGBuilder` 
+        The CFGBuilder class to build the CFG
+
+    Returns
+    ---
+        `dict` Dictionary of {method_name: networkx.DiGraph}
+    """
+    root = tree.root_node
+    method_cfgs = {}
+
+    # Walk the tree and look for method declarations
+    def get_method_name(method_node):
+        for child in method_node.children:
+            if child.type == "identifier":
+                return source_code[child.start_byte:child.end_byte].decode("utf-8")
+        return "unknown_method"
+
+    # Recursive DFS to find all method_declaration nodes
+    def walk_for_methods(node):
+        if node.type == "method_declaration":
+            method_name = get_method_name(node)
+
+            # Build the CFG from the method body
+            node_body = node.child_by_field_name("body")
+
+            # Initialize the CFGBuilder for both files
+            builder = cfg_builder_class(source_code)
+            builder.build_from_ast(node_body)
+            method_cfgs[method_name] = builder.graph
+        for child in node.children:
+            walk_for_methods(child)
+
+    walk_for_methods(root)
+    return method_cfgs
 
 # Define the constants for the Parser
 lang_grammar, path_grammar, file = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -321,24 +407,8 @@ lang_grammar, path_grammar, file = sys.argv[1], sys.argv[2], sys.argv[3]
 # Initialize the parser
 parser = Parser()
 
-if lang_grammar == 'cpp':
-  try:
-    parser.set_language(Language(path_grammar, 'cpp'))
-  except Exception as e:
-    print(f"[ERROR]: Failed to load C++ language grammar. {e}")
-    sys.exit(1)
-
-elif lang_grammar == 'java':
-  try:
-    parser.set_language(Language(path_grammar, 'java'))
-  except Exception as e:
-    print(f"[ERROR]: Failed to load Java language grammar. {e}")
-    sys.exit(1)
-
-else:
-    print("[ARG0]: Language not supported. Please use 'cpp' or 'java'.")
-    sys.exit(1)
-
+# Set the grammar for the parser
+set_parserGrammar(parser, lang_grammar, path_grammar)
 
 # Read codes from the provided file path
 with open(file, 'rb') as f:
@@ -347,25 +417,14 @@ with open(file, 'rb') as f:
 # Generate the AST for the provided code snippets
 tree = parser.parse(code)
 
-# Find the method declaration node
-node_method = find_method_declaration(tree.root_node)
-
-if node_method is None:
-    print("[ERROR]: No method_declaration found in the AST.")
-    sys.exit(1)
-
-# Build the CFG from the method body
-node_body = node_method.child_by_field_name("body")
-
-# Initialize the CFGBuilder
-cfg_builder = CFGBuilder(code)
-cfg = cfg_builder.build_from_ast(node_body)
-cfgGraph = cfg_builder.graph
+# Generate the CFG's for the provided code snippets
+CFSubGraphs = build_CFG(tree, code, CFGBuilder)
+CFGraph = merge_CFGs(CFSubGraphs)
 
 # Print nodes and edges of the CFG
 print("Nodes in CFG:")
-for node in cfgGraph.nodes(data=True):
+for node in CFGraph.nodes(data=True):
     print(node[0], node[1]['label'])
 print("\nEdges in CFG:")
-for edge in cfgGraph.edges(data=True):
+for edge in CFGraph.edges(data=True):
     print(edge[0], edge[1])
