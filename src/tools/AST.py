@@ -167,11 +167,12 @@ class CFGBuilder:
             for child in node.children:
                 if child.is_named:
                     subgraph = self._visit(child)
-                    if entry is None:
-                        entry = subgraph["entry"]
-                    if prev_exit:
-                        self.connect_all(prev_exit, subgraph["entry"])
-                    prev_exit = subgraph["exit"]
+                    if subgraph["entry"] is not None:
+                        if entry is None:
+                            entry = subgraph["entry"]
+                        if prev_exit:
+                            self.connect_all(prev_exit, subgraph["entry"])
+                        prev_exit = subgraph["exit"]
             return {"entry": entry, "exit": prev_exit}
 
         elif node.type == "if_statement":
@@ -180,11 +181,14 @@ class CFGBuilder:
             else_node = node.child_by_field_name("alternative")
             if else_node:
                 else_branch = self._visit(else_node)
-                self.graph.add_edge(cond_node, then_branch["entry"])
-                self.graph.add_edge(cond_node, else_branch["entry"])
+                if then_branch["entry"] is not None:
+                    self.graph.add_edge(cond_node, then_branch["entry"])
+                if else_branch["entry"] is not None:
+                    self.graph.add_edge(cond_node, else_branch["entry"])
                 exits = then_branch["exit"] + else_branch["exit"]
             else:
-                self.graph.add_edge(cond_node, then_branch["entry"])
+                if then_branch["entry"] is not None:
+                    self.graph.add_edge(cond_node, then_branch["entry"])
                 exits = then_branch["exit"] + [cond_node]
             return {"entry": cond_node, "exit": exits}
 
