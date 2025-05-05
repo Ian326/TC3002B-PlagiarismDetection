@@ -54,9 +54,18 @@ class CFGBuilder:
         self.loop_stack = []  # Holds tuples for break/continue statements
         self.toPrintNodes = []  # Nodes to be appended to the graph
 
-
-    # Generate a detailed label by traversing the node's children
     def generate_label(self, node):
+        """
+        Generate a label for a node in the AST.
+        
+        Parameters
+        ---
+        node: `Tree Sitter Node` The node to generate a label for.
+        
+        Returns
+        ---
+        label: `str` The generated label for the node.
+        """
         if node.child_count == 0:  # Leaf node
             return node.type
         if node.type == "identifier":
@@ -65,9 +74,6 @@ class CFGBuilder:
             return ''.join(self.generate_label(child) for child in node.children)
         if node.type == "local_variable_declaration":
             return ''.join(self.generate_label(child) for child in node.children)
-        
-        if node.type == "switch_block_statement_group":
-            return ''.join(self.generate_label(child) for child in node.children if child.type == "switch_label")
         if node.type == "switch_label":
             return ''.join(self.generate_label(child) for child in node.children)
         else:  # Non-leaf node
@@ -108,16 +114,17 @@ class CFGBuilder:
         elif node.type == "if_statement":
             label = f"if {self.generate_label(node.child_by_field_name('condition'))}"
         elif node.type == "for_statement":
-            label = f"for {self.generate_label(node.child_by_field_name('init'))} {self.generate_label(node.child_by_field_name('condition'))} {self.generate_label(node.child_by_field_name('update'))}"
+            label = ("for "
+                    f"{self.generate_label(node.child_by_field_name('init'))} "
+                    f"{self.generate_label(node.child_by_field_name('condition'))} "
+                    f"{self.generate_label(node.child_by_field_name('update'))}"
+                    )
         elif node.type == "while_statement":
             label = f"while {self.generate_label(node.child_by_field_name('condition'))}"
-        elif node.type == "switch_block_statement_group":
-            label = f"switch {self.generate_label(node)}"
         elif node.type == "identifier":
             label = f"identifier: {node.type}"
         else:
             label = node.type
-            # Append additional text for leaf nodes
             if node.child_count == 0 and node.text:
                 label += f": {node.text.decode('utf8')}"
         self.graph.add_node(idx, label=label)
@@ -164,6 +171,7 @@ class CFGBuilder:
         if node.type == "block":
             prev_exit = []
             entry = None
+
             for child in node.children:
                 if child.is_named:
                     subgraph = self._visit(child)
@@ -173,12 +181,14 @@ class CFGBuilder:
                         if prev_exit:
                             self.connect_all(prev_exit, subgraph["entry"])
                         prev_exit = subgraph["exit"]
+            
             return {"entry": entry, "exit": prev_exit}
 
         elif node.type == "if_statement":
             cond_node = self.new_node(node, f"if {self.get_text(node.child_by_field_name('condition'))}")
             then_branch = self._visit(node.child_by_field_name("consequence"))
             else_node = node.child_by_field_name("alternative")
+            
             if else_node:
                 else_branch = self._visit(else_node)
                 if then_branch["entry"] is not None:
@@ -186,46 +196,42 @@ class CFGBuilder:
                 if else_branch["entry"] is not None:
                     self.graph.add_edge(cond_node, else_branch["entry"])
                 exits = then_branch["exit"] + else_branch["exit"]
+            
             else:
                 if then_branch["entry"] is not None:
                     self.graph.add_edge(cond_node, then_branch["entry"])
                 exits = then_branch["exit"] + [cond_node]
+            
             return {"entry": cond_node, "exit": exits}
 
         elif node.type == "while_statement":
             cond_node = self.new_node(node, f"while {self.get_text(node.child_by_field_name('condition'))}")
-            
-            self.loop_stack.append((cond_node, []))  # Track exits for break
-            
             body = self._visit(node.child_by_field_name("body"))
+            
             self.graph.add_edge(cond_node, body["entry"])
             self.connect_all(body["exit"], cond_node)
             
+            self.loop_stack.append((cond_node, []))  # Track exits for break
             _, break_exits = self.loop_stack.pop() # Track exits for break
             
             return {"entry": cond_node, "exit": break_exits + [cond_node]}
         
         elif node.type == "do_statement":
             cond_node = self.new_node(node, f"while {self.get_text(node.child_by_field_name('condition'))}")
-
             body = self._visit(node.child_by_field_name("body"))
-
-
-            self.loop_stack.append((cond_node, []))
 
             self.graph.add_edge(cond_node, body["entry"])  # Loop back if condition true
             self.connect_all(body["exit"], cond_node)  # Body to condition
 
-            _, break_exits = self.loop_stack.pop()
+            self.loop_stack.append((cond_node, [])) # Track exits for break
+            _, break_exits = self.loop_stack.pop() # Track exits for break
+
             return {"entry": body["entry"], "exit": break_exits + [cond_node]}
 
         elif node.type == "for_statement":
             init = self.new_node(node, self.get_text(node.child_by_field_name("init")))
             cond = self.new_node(node, f"for {self.get_text(node.child_by_field_name('condition'))}")
             update = self.new_node(node, self.get_text(node.child_by_field_name("update")))
-
-            self.loop_stack.append((cond, []))  # Track exits for break
-
             body = self._visit(node.child_by_field_name("body"))
 
             self.graph.add_edge(init, cond)
@@ -233,6 +239,7 @@ class CFGBuilder:
             self.connect_all(body["exit"], update)
             self.graph.add_edge(update, cond)
 
+            self.loop_stack.append((cond, []))  # Track exits for break
             _, break_exits = self.loop_stack.pop() # Track exits for break
             
             return {"entry": init, "exit": break_exits + [cond]}
@@ -240,64 +247,96 @@ class CFGBuilder:
         elif node.type == "switch_expression":
             cond_node = self.new_node(node, f"switch {self.get_text(node.child_by_field_name('condition'))}")
             body = node.child_by_field_name("body")  # should be a block
-            case_entries = []
-            last_exits = []
-            for child in body.children:
-                if child.type in {"switch_label", "case", "default", "switch_block_statement_group"}:
-                    label = self.new_node(child, self.get_text(child))
-                    self.graph.add_edge(cond_node, label)
-                    case_entries.append(label)
-                    last_label = label
-                    last_exits.append(label)
-                elif child.is_named:
-                    subgraph = self._visit(child)
-                    self.connect_all(last_exits, subgraph["entry"])
-                    last_exits = subgraph["exit"]
+            exits = []
 
-            return {"entry": cond_node, "exit": last_exits}
+            for child in body.children:
+                if child.type != "switch_block_statement_group":
+                    continue
+                
+                label_node = None
+                group_entry = None
+                group_exit = []
+
+                for grandchild in child.children:
+                    if grandchild.type == "switch_label":
+                        label_node = self.new_node(grandchild, self.get_text(grandchild))
+                        self.graph.add_edge(cond_node, label_node)
+                    
+                    elif grandchild.is_named:
+                        subgraph = self._visit(grandchild)
+                        
+                        if subgraph["entry"] is not None:
+                            if group_entry is None:
+                                group_entry = subgraph["entry"]
+                                if label_node:
+                                    self.graph.add_edge(label_node, group_entry)
+                            else:
+                                self.connect_all(group_exit, subgraph["entry"])
+                            
+                            group_exit = subgraph["exit"]
+                            
+                            if grandchild.type == "break_statement":
+                                group_exit.append(subgraph["entry"])
+
+                if group_exit:
+                    exits += group_exit
+            
+            return {"entry": cond_node, "exit": exits}
 
         elif node.type == "try_statement":
-            try_block = self._visit(node.child_by_field_name("block"))
-            exits = try_block["exit"]
+            try_stmt = self.new_node(node, "try_statement")
+            pre_try_nodes = set(self.graph.nodes)
+            try_block = self._visit(node.child_by_field_name("body"))
+            self.graph.add_edge(try_stmt, try_block["entry"])
+            exits = []
+            try_nodes = list(set(self.graph.nodes) - pre_try_nodes)
 
             # Handle catch clauses
             catch_clauses = [c for c in node.children if c.type == "catch_clause"]
+            catch_exits = []
             for catch in catch_clauses:
-                catch_block = self._visit(catch.child_by_field_name("block"))
-                self.connect_all([try_block["entry"]], catch_block["entry"])
-                exits += catch_block["exit"]
+                catch_block = self._visit(catch.child_by_field_name("body"))
+                self.connect_all(try_nodes, catch_block["entry"])
+                catch_exits.extend(catch_block["exit"])
 
             # Handle finally
-            finally_block = node.child_by_field_name("finally_clause")
-            if finally_block:
-                final_graph = self._visit(finally_block.child_by_field_name("block"))
-                self.connect_all(exits, final_graph["entry"])
-                exits = final_graph["exit"]
-
+            finally_clause = [c for c in node.children if c.type == "finally_clause"]
+            if len(finally_clause) == 1:
+                finally_clause = finally_clause[0]
+                finally_block = [f for f in finally_clause.children if f.type == "block"]
+                if len(finally_block) == 1:
+                    finally_block = finally_block[0]
+                    final_graph = self._visit(finally_block)
+                    self.connect_all(try_block["exit"] + catch_exits, final_graph["entry"])
+                    exits = final_graph["exit"]
+                else:
+                    exits = try_block["exit"] + catch_exits
+            else:
+                exits = try_block["exit"] + catch_exits
+            
             return {"entry": try_block["entry"], "exit": exits}
         
         elif node.type == "break_statement":
-            brk = self.new_node("break")
+            brk = self.new_node(node, "break")
             if self.loop_stack:
                 _, break_targets = self.loop_stack[-1]
                 break_targets.append(brk)
             return {"entry": brk, "exit": []}
 
         elif node.type == "continue_statement":
-            cont = self.new_node("continue")
+            cont = self.new_node(node, "continue")
             if self.loop_stack:
                 loop_cond, _ = self.loop_stack[-1]
                 self.graph.add_edge(cont, loop_cond)
             return {"entry": cont, "exit": []}
-
-
+        
         elif node.type == "return_statement":
             ret = self.new_node(node, self.get_text(node))
             return {"entry": ret, "exit": []}
         
         elif node.type in ["block_comment", "line_comment"]:
             return {"entry": None, "exit": []}
-
+        
         else:
             stmt = self.new_node(node, self.get_text(node))
             return {"entry": stmt, "exit": [stmt]}
