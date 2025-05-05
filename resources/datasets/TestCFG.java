@@ -3,21 +3,16 @@ public class TestCFG {
         return a + b;
     }
     public static void main(String[] args) {
-        // Lets make a switch statement
-        int x = 1;
-        switch (x) {
-            case 1:
-                System.out.println("x is 1");
-                System.out.println("Sum: " + sum(1, 2));
-                break;
-            case 2:
-                System.out.println("x is 2");
-                System.out.println("Sum: " + sum(2, 3));
-                break;
-            default:
-                System.out.println("x is not 1 or 2");
-                System.out.println("Sum: " + sum(0, 0));
+        try {
+            int a = 5;
+            int b = 10;
+            int c = a + b;
+            System.out.println("Sum: " + c);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        } finally {
+            System.out.println("Finally block executed");
         }
-        int y = 2;
+        int result = sum(3, 4);
     }
 }
