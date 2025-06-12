@@ -1,4 +1,4 @@
-# TC3002B-PlagiarismDetection
+# TC3002BPlagiarismDetection
 
 ## Description 📝
 This project is a plagiarism detection tool designed to analyze source code files. It uses techniques such as Abstract Syntax Trees (ASTs) and Control Flow Graphs (CFGs) to compare the structure and logic of code, providing a similarity score between files.
